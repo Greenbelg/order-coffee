@@ -1,26 +1,34 @@
+addDeleteButton(document.querySelector('.beverage'));
 let addButton = document.querySelector('.add-button');
 let counter = 1;
 
-addButton.addEventListener('click', function() {
+addButton.addEventListener('click', () => {
     let fieldset = document.querySelector('.beverage');
     let clonedFieldset = fieldset.cloneNode(true);
     clonedFieldset.querySelector('.delete-button').remove();
-    
-    for (let inp of clonedFieldset.querySelectorAll('radio')) {
-        inp.setAttribute('name', `milk${counter}`)
+
+    for (let inp of clonedFieldset.querySelectorAll('.radio')) {
+        inp.setAttribute('name', `milk${counter}`);
     }
-    for (let inp of clonedFieldset.querySelectorAll('checkbox')) {
-        inp.setAttribute('name', `options${counter}`)
+    for (let inp of clonedFieldset.querySelectorAll('.checkbox')) {
+        inp.setAttribute('name', `options${counter}`);
     }
     
     clonedFieldset.querySelector('.beverage-count').textContent = 'Напиток №' + (++counter);
+    addDeleteButton(clonedFieldset);
+
+    let fieldsets = document.querySelectorAll('.beverage');
+    fieldset.parentNode.insertBefore(clonedFieldset, fieldsets[fieldsets.length - 1].nextSibling);
+});
+
+function addDeleteButton(fieldset) {
     let deleteButton = document.createElement('button');
     deleteButton.textContent = 'X';
     deleteButton.className = 'delete-button';
-    deleteButton.addEventListener('click', function() {
+    deleteButton.addEventListener('click', () => {
         if (counter > 1) {
-            clonedFieldset.remove();
-            counter--; 
+            fieldset.remove();
+            counter--;
             document.querySelectorAll('.beverage').forEach(function(fs, index) {
                 fs.querySelector('.beverage-count').textContent = 'Напиток №' + (index + 1);
             });
@@ -28,43 +36,24 @@ addButton.addEventListener('click', function() {
             let idx = 0;
             let blocki = document.querySelectorAll('.beverage');
             for (let block of blocki){
-                for (let inp of block.querySelectorAll('radio')) {
+                for (let inp of block.querySelectorAll('.radio')) {
                     inp.setAttribute('name', `milk${idx}`);
                 }
-                for (let inp of block.querySelectorAll('checkbox')) {
+                for (let inp of block.querySelectorAll('.checkbox')) {
                     inp.setAttribute('name', `options${idx}`);
                 }
                 idx++;
             }
-
         }
     });
-    clonedFieldset.appendChild(deleteButton);
-
-    let fieldsets = document.querySelectorAll('.beverage');
-    fieldset.parentNode.insertBefore(clonedFieldset, fieldsets[fieldsets.length - 1].nextSibling);
-});
-
-let fieldset = document.querySelector('.beverage');
-let deleteButton = document.createElement('button');
-deleteButton.textContent = 'X';
-deleteButton.className = 'delete-button';
-deleteButton.addEventListener('click', function() {
-    if (counter > 1) {
-        clonedFieldset.remove();
-        counter--;
-        document.querySelectorAll('.beverage').forEach(function(fs, index) {
-            fs.querySelector('.beverage-count').textContent = 'Напиток №' + (index + 1);
-        });
-    }
-});
-fieldset.appendChild(deleteButton);
+    fieldset.appendChild(deleteButton);
+}
 
 const submitButton = document.querySelector('.submit-button');
 const modal = document.querySelector('.modal');
 const closeButton = document.querySelector('.close');
 
-submitButton.addEventListener('click', event => {
+submitButton.addEventListener('click', () => {
     modal.style.display = 'block';
 
     const getCorrectEnding = (clickCount) => 
@@ -80,16 +69,15 @@ submitButton.addEventListener('click', event => {
         const drinkSelect = form.querySelector('select');
         const milkRadios = form.querySelectorAll(`.beverage input[name="milk${idx}"]:checked`);
         const extrasCheckboxes = form.querySelectorAll(`.beverage input[name="options${idx}"]:checked`);
-        const drink =drinkSelect.value;
+        const drink = drinkSelect.value;
         const milk = milkRadios.length > 0 ? milkRadios[0].value : '';
         const extras = Array.from(extrasCheckboxes).map(checkbox => checkbox.value);
-        console.log(extras)
         addOrderToTable(drink, milk, extras);
         idx += 1;
     }
 });
 
-closeButton.addEventListener('click', event => {
+closeButton.addEventListener('click', () => {
     modal.style.display = 'none';
     location.reload();
 });
